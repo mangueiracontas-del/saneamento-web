@@ -49,9 +49,10 @@ export function SitesManager() {
   const [open, setOpen] = useState(false);
 
   async function load() {
+    const sb = await __import_supabase();
     const [{ data: s }, { data: l }] = await Promise.all([
-      __import_supabase().then((sb) => sb.from("sites").select("id,nome").order("nome")),
-      __import_supabase().then((sb) => sb.from("locais").select("id,nome,site_id").order("nome")),
+      sb.from("sites").select("id,nome").order("nome"),
+      sb.from("locais").select("id,nome,site_id").order("nome"),
     ]);
     setSites(s || []);
     setLocais(l || []);
@@ -60,28 +61,32 @@ export function SitesManager() {
 
   async function addSite() {
     if (!newSite.trim()) return;
-    const sb = await __import_supabase();
-    await sb.from("sites").insert({ nome: newSite.trim() });
+    const { createSite } = await import("@/lib/sites.functions");
+    try { await createSite({ data: { nome: newSite.trim() } }); }
+    catch (e: any) { alert(e?.message || "Erro"); return; }
     setNewSite("");
     load();
   }
   async function addLocal(siteId: string) {
     const v = (newLocal[siteId] || "").trim();
     if (!v) return;
-    const sb = await __import_supabase();
-    await sb.from("locais").insert({ site_id: siteId, nome: v });
+    const { createLocal } = await import("@/lib/sites.functions");
+    try { await createLocal({ data: { site_id: siteId, nome: v } }); }
+    catch (e: any) { alert(e?.message || "Erro"); return; }
     setNewLocal((s) => ({ ...s, [siteId]: "" }));
     load();
   }
   async function delSite(id: string) {
     if (!confirm("Excluir este site e todos os seus locais?")) return;
-    const sb = await __import_supabase();
-    await sb.from("sites").delete().eq("id", id);
+    const { deleteSite } = await import("@/lib/sites.functions");
+    try { await deleteSite({ data: { id } }); }
+    catch (e: any) { alert(e?.message || "Erro"); return; }
     load();
   }
   async function delLocal(id: string) {
-    const sb = await __import_supabase();
-    await sb.from("locais").delete().eq("id", id);
+    const { deleteLocal } = await import("@/lib/sites.functions");
+    try { await deleteLocal({ data: { id } }); }
+    catch (e: any) { alert(e?.message || "Erro"); return; }
     load();
   }
 

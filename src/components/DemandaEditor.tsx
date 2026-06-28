@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import { deleteDemanda, updateDemanda } from "@/lib/demandas.functions";
 import { EQUIPES, STATUSES, equipeLabel } from "@/lib/situacao";
 
 export function DemandaEditor({
@@ -28,11 +28,15 @@ export function DemandaEditor({
       patch.equipe_destino = equipe || null;
     }
     if (status === "concluida" && !demanda.concluida_em) patch.concluida_em = new Date().toISOString();
-    const { error } = await supabase.from("demandas").update(patch).eq("id", demanda.id);
-    setSaving(false);
-    if (error) { alert(error.message); return; }
-    onSaved();
-    onClose();
+    try {
+      await updateDemanda({ data: { id: demanda.id, patch } });
+      onSaved();
+      onClose();
+    } catch (e: any) {
+      alert(e?.message || "Erro ao salvar");
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function aceitar() {
@@ -44,19 +48,26 @@ export function DemandaEditor({
     };
     if (prioridade) patch.prioridade = prioridade;
     if (role === "planejamento" && equipe) { patch.equipe_destino = equipe; patch.status = "direcionada"; }
-    const { error } = await supabase.from("demandas").update(patch).eq("id", demanda.id);
-    setSaving(false);
-    if (error) { alert(error.message); return; }
-    setStatus(patch.status);
-    onSaved();
+    try {
+      await updateDemanda({ data: { id: demanda.id, patch } });
+      setStatus(patch.status);
+      onSaved();
+    } catch (e: any) {
+      alert(e?.message || "Erro ao aceitar");
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function excluir() {
     if (!confirm(`Excluir demanda #${demanda.numero}?`)) return;
-    const { error } = await supabase.from("demandas").delete().eq("id", demanda.id);
-    if (error) { alert(error.message); return; }
-    onSaved();
-    onClose();
+    try {
+      await deleteDemanda({ data: { id: demanda.id } });
+      onSaved();
+      onClose();
+    } catch (e: any) {
+      alert(e?.message || "Erro ao excluir");
+    }
   }
 
   return (
