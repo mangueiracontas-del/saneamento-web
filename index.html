@@ -2,36 +2,11 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Manutenção - SPCI</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    h1 { color: #2c3e50; }
-  </style>
+  <title>Redirecionando...</title>
+  <meta http-equiv="refresh" content="0; url=https://sane-flow-app.lovable.app/manutencao">
 </head>
 <body>
-  <h1>Manutenção - SPCI</h1>
-  <p>Bem-vindo ao sistema de manutenção conectado ao Supabase.</p>
-  <div id="usuarios"></div>
-
-  <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
-
-    const supabase = createClient(
-      "https://llnecvfzboqqgspvbibg.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-    )
-
-    async function carregarUsuarios() {
-      const { data, error } = await supabase.from("usuarios").select("*")
-      if (error) {
-        document.getElementById("usuarios").innerText = "Erro ao carregar usuários"
-      } else {
-        document.getElementById("usuarios").innerHTML =
-          "<ul>" + data.map(u => `<li>${u.nome} - ${u.email}</li>`).join("") + "</ul>"
-      }
-    }
-
-    carregarUsuarios()
-  </script>
+  <p>Você está sendo redirecionado para <a href="https://sane-flow-app.lovable.app/manutencao">Manutenção</a>...</p>
 </body>
 </html>
+
