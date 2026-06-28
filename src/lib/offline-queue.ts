@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { createDemanda, uploadFotoDemanda } from "@/lib/demandas.functions";
 
 const KEY = "pending_demandas_v1";
 
@@ -39,32 +39,13 @@ export function enqueue(item: PendingDemanda) {
   writeQueue(q);
 }
 
-async function dataUrlToBlob(dataUrl: string): Promise<Blob> {
-  const res = await fetch(dataUrl);
-  return res.blob();
-}
-
 export async function sendDemanda(item: PendingDemanda) {
   let foto_url: string | null = null;
   if (item.fotoBase64) {
-    const blob = await dataUrlToBlob(item.fotoBase64);
-    const ext = (item.fotoName?.split(".").pop() || "jpg").toLowerCase();
-    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const up = await supabase.storage.from("demandas-fotos").upload(path, blob, {
-      contentType: blob.type || "image/jpeg",
-    });
-    if (up.error) throw up.error;
-    const { data: signed } = await supabase.storage
-      .from("demandas-fotos")
-      .createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
-    foto_url = signed?.signedUrl ?? null;
+    const r = await uploadFotoDemanda({ data: { base64: item.fotoBase64, name: item.fotoName } });
+    foto_url = r.signedUrl;
   }
-  const { error } = await supabase.from("demandas").insert({
-    ...item.payload,
-    situacao_atual: item.payload.situacao_atual as any,
-    foto_url,
-  });
-  if (error) throw error;
+  await createDemanda({ data: { ...item.payload, foto_url } });
 }
 
 export async function flushQueue(): Promise<{ sent: number; failed: number }> {

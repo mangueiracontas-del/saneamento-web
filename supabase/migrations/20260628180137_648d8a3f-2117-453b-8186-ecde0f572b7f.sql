@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "demandas public insert" ON public.demandas;
