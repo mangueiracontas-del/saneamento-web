@@ -41,12 +41,12 @@ export function RoleToolbar({ role, onLogout }: { role: "planejamento" | "manute
   );
 }
 
-export function SitesManager() {
+export function SitesManager({ defaultOpen = false }: { defaultOpen?: boolean } = {}) {
   const [sites, setSites] = useState<any[]>([]);
   const [locais, setLocais] = useState<any[]>([]);
   const [newSite, setNewSite] = useState("");
   const [newLocal, setNewLocal] = useState<Record<string, string>>({});
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
 
   async function load() {
     const sb = await __import_supabase();

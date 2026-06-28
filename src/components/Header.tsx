@@ -15,6 +15,7 @@ export function Header() {
         </Link>
         <nav className="flex items-center gap-1 text-sm">
           <Link to="/" className="rounded-md px-3 py-2 hover:bg-white/10">Demandas</Link>
+          <Link to="/cadastros" className="rounded-md px-3 py-2 hover:bg-white/10">Cadastros</Link>
           <Link to="/planejamento" className="rounded-md px-3 py-2 hover:bg-white/10">Planejamento</Link>
           <Link to="/manutencao" className="rounded-md px-3 py-2 hover:bg-white/10">Manutenção</Link>
         </nav>
