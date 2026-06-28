@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PlanejamentoRouteImport } from './routes/planejamento'
 import { Route as ManutencaoRouteImport } from './routes/manutencao'
+import { Route as CadastrosRouteImport } from './routes/cadastros'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginRoleRouteImport } from './routes/login.$role'
 
@@ -22,6 +23,11 @@ const PlanejamentoRoute = PlanejamentoRouteImport.update({
 const ManutencaoRoute = ManutencaoRouteImport.update({
   id: '/manutencao',
   path: '/manutencao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastrosRoute = CadastrosRouteImport.update({
+  id: '/cadastros',
+  path: '/cadastros',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -37,12 +43,14 @@ const LoginRoleRoute = LoginRoleRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cadastros': typeof CadastrosRoute
   '/manutencao': typeof ManutencaoRoute
   '/planejamento': typeof PlanejamentoRoute
   '/login/$role': typeof LoginRoleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cadastros': typeof CadastrosRoute
   '/manutencao': typeof ManutencaoRoute
   '/planejamento': typeof PlanejamentoRoute
   '/login/$role': typeof LoginRoleRoute
@@ -50,20 +58,33 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/cadastros': typeof CadastrosRoute
   '/manutencao': typeof ManutencaoRoute
   '/planejamento': typeof PlanejamentoRoute
   '/login/$role': typeof LoginRoleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/manutencao' | '/planejamento' | '/login/$role'
+  fullPaths:
+    | '/'
+    | '/cadastros'
+    | '/manutencao'
+    | '/planejamento'
+    | '/login/$role'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/manutencao' | '/planejamento' | '/login/$role'
-  id: '__root__' | '/' | '/manutencao' | '/planejamento' | '/login/$role'
+  to: '/' | '/cadastros' | '/manutencao' | '/planejamento' | '/login/$role'
+  id:
+    | '__root__'
+    | '/'
+    | '/cadastros'
+    | '/manutencao'
+    | '/planejamento'
+    | '/login/$role'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CadastrosRoute: typeof CadastrosRoute
   ManutencaoRoute: typeof ManutencaoRoute
   PlanejamentoRoute: typeof PlanejamentoRoute
   LoginRoleRoute: typeof LoginRoleRoute
@@ -85,6 +106,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManutencaoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cadastros': {
+      id: '/cadastros'
+      path: '/cadastros'
+      fullPath: '/cadastros'
+      preLoaderRoute: typeof CadastrosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -104,6 +132,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CadastrosRoute: CadastrosRoute,
   ManutencaoRoute: ManutencaoRoute,
   PlanejamentoRoute: PlanejamentoRoute,
   LoginRoleRoute: LoginRoleRoute,
