@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { loginRole } from "@/lib/gate.functions";
@@ -11,6 +11,7 @@ export const Route = createFileRoute("/login/$role")({
 function LoginPage() {
   const { role } = Route.useParams();
   const navigate = useNavigate();
+  const router = useRouter();
   const login = useServerFn(loginRole);
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
@@ -25,9 +26,13 @@ function LoginPage() {
     setErr(null);
     setLoading(true);
     const r = await login({ data: { role: role as "planejamento" | "manutencao", password } });
+    if (r.ok) {
+      await router.invalidate();
+      await navigate({ to: role === "planejamento" ? "/planejamento" : "/manutencao", replace: true });
+    } else {
+      setErr("Senha incorreta.");
+    }
     setLoading(false);
-    if (r.ok) navigate({ to: role === "planejamento" ? "/planejamento" : "/manutencao" });
-    else setErr("Senha incorreta.");
   }
 
   return (
