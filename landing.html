@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saneamento e SPCI — Gestão de Demandas de Manutenção</title>
+  <meta name="description" content="Sistema completo para receber, acompanhar e gerenciar demandas de manutenção em saneamento e sistemas de controle e instrumentação.">
+  <meta property="og:title" content="Saneamento e SPCI — Gestão de Demandas de Manutenção">
+  <meta property="og:description" content="Registre falhas, acompanhe status, exporte relatórios e gerencie equipes de manutenção e planejamento.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sane-flow-app.lovable.app">
+  <link rel="canonical" href="https://sane-flow-app.lovable.app">
+  <style>
+    :root {
+      --primary: #0ea5e9;
+      --primary-dark: #0284c7;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .hero {
+      padding: 100px 0 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: 50%;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(14,165,233,0.12) 0%, transparent 70%);
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--muted);
+      max-width: 640px;
+      margin: 0 auto 40px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      box-shadow: 0 4px 24px rgba(14,165,233,0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(14,165,233,0.4);
+    }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-left: 12px;
+    }
+    .btn-secondary:hover {
+      border-color: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+    }
+    .features {
+      padding: 80px 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .features h2 {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 60px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 32px;
+      transition: all 0.2s ease;
+    }
+    .card:hover {
+      border-color: rgba(14,165,233,0.3);
+      transform: translateY(-4px);
+    }
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(14,165,233,0.1);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+    .card h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .status-flow {
+      padding: 80px 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .status-flow h2 {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 60px;
+    }
+    .flow {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .flow-step {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .flow-arrow {
+      color: var(--muted);
+      font-size: 1.2rem;
+    }
+    .cta {
+      padding: 100px 0;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+    }
+    .cta::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(14,165,233,0.08) 0%, transparent 70%);
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+    .cta h2 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .cta p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      margin-bottom: 40px;
+    }
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 2rem; }
+      .hero p { font-size: 1rem; }
+      .btn { width: 100%; justify-content: center; margin-left: 0 !important; margin-top: 12px; }
+      .flow { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a href="#" class="logo">
+        <div class="logo-icon">⚡</div>
+        <span>Saneamento &amp; SPCI</span>
+      </a>
+      <a href="https://sane-flow-app.lovable.app" class="btn btn-primary" style="padding: 10px 24px; font-size: 0.95rem;">
+        Acessar App →
+      </a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Gestão de Demandas de Manutenção</h1>
+      <p>Registre falhas, acompanhe status em tempo real, exporte relatórios e gerencie equipes de Planejamento, Manutenção Corretiva, Preventiva, Inspeção e PCM.</p>
+      <div>
+        <a href="https://sane-flow-app.lovable.app" class="btn btn-primary">Acessar Aplicação</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <h2>Funcionalidades Principais</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="card-icon">📋</div>
+          <h3>Abertura de Demandas</h3>
+          <p>Registre demandas com ID sequencial, data, site, local, TAG do equipamento, descrição detalhada, situação atual (Crítico, Prioritário, Moderado, Leve) e foto anexada.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔎</div>
+          <h3>Filtros e Relatórios</h3>
+          <p>Filtre demandas por data, site, local, prioridade, status e solicitante. Exporte os dados diretamente em planilhas Excel.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📡</div>
+          <h3>Funcionamento Offline</h3>
+          <p>Sem internet? As demandas são salvas no navegador e enviadas automaticamente quando a conexão retorna.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">👷</div>
+          <h3>Equipe de Planejamento</h3>
+          <p>Aceite, direcione para a equipe correta e classifique a prioridade (P0 a PN). Gerencie sites e locais cadastrados.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔧</div>
+          <h3>Equipe de Manutenção</h3>
+          <p>Aceite demandas diretamente em andamento, registre análise e resolução, conclua serviços e ajuste prioridades.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h3>Acompanhamento Completo</h3>
+          <p>Visão clara do fluxo: Aberta → Aceita → Direcionada → Em Andamento → Concluída, com ordenação inteligente por data e prioridade.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="status-flow">
+    <div class="container">
+      <h2>Fluxo das Demandas</h2>
+      <div class="flow">
+        <span class="flow-step">📝 Aberta</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">✅ Aceita</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">📌 Direcionada</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">🚧 Em Andamento</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">✔️ Concluída</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container">
+      <h2>Pronto para começar?</h2>
+      <p>Acesse o sistema agora e comece a gerenciar suas demandas de manutenção com eficiência.</p>
+      <a href="https://sane-flow-app.lovable.app" class="btn btn-primary">Acessar Aplicação</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>© Saneamento e SPCI. Aplicação publicada em <a href="https://sane-flow-app.lovable.app" style="color: var(--primary);">sane-flow-app.lovable.app</a></p>
+    </div>
+  </footer>
+</body>
+</html>
